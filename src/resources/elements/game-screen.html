@@ -1,0 +1,10 @@
+<template>
+    <require from="resources/elements/puck"></require>
+
+    <div id="arena"
+         class="arena"
+         css="width:${arenaWidth}px; height:${arenaHeight}px"
+         touchstart.delegate="touchService.handleTouch($event)">
+    </div>
+    <puck containerless></puck>
+</template>

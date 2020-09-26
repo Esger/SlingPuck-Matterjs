@@ -1,0 +1,11 @@
+<template>
+    <div mousedown.delegate="startDrag($event)"
+         touchstart.delegate="startDrag($event)"
+         mousemove.delegate="doDrag($event)"
+         touchmove.delegate="doDrag($event)"
+         mouseup.delegate="stopDrag()"
+         mouseout.delegate="stopDrag()"
+         touchend.delegate="stopDrag()"
+         css.bind="puckStyle"
+         class="puck"></div>
+</template>
