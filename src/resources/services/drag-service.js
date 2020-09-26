@@ -90,7 +90,12 @@ export class DragService {
     }
 
     stopDrag() {
-        this._setElementEndPos(this._elementStartPos.x + this._distance.x, this._elementStartPos.y + this._distance.y);
-        this._isDragged = false;
+        if (this._isDragged) {
+            const finalX = this._elementStartPos.x + this._distance.x;
+            const finalY = this._elementStartPos.y + this._distance.y;
+            this._setElementEndPos(finalX, finalY);
+            this._setElementStartPos(finalX, finalY);
+            this._isDragged = false;
+        }
     }
 }

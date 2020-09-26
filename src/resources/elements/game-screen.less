@@ -3,7 +3,7 @@ game-screen {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     position: relative;
     overflow: hidden;
@@ -12,6 +12,8 @@ game-screen {
 
 .arena {
     position: relative;
+    width: calc(~'100vw - 60px');
+    height: calc(~'100vh - 60px');
     background-color: black;
     pointer-events: auto;
     overflow: hidden;

@@ -36,15 +36,54 @@ export class PuckCustomElement {
     }
 
     stopDrag() {
-        this._ds.stopDrag();
-        const endPos = this._ds.getElementFinalPos();
-        this._basePuckStyle = 'left: ' + (endPos.x) + 'px; top: ' + (endPos.y) + 'px;';
-        this.puckStyle = this._basePuckStyle;
+        if (this._ds.getIsDragged()) {
+            this._ds.stopDrag();
+            const endPos = this._ds.getElementFinalPos();
+            this.setBasePuckStyle(endPos.x, endPos.y);
+            this.addPuckStyle();
+            setTimeout(_ => {
+                this.shoot();
+            });
+        }
     }
 
     setTransformStyle() {
         const distance = this._ds.getDistance();
-        this.puckStyle = this._basePuckStyle + 'transform: translate(' + distance.x + 'px, ' + distance.y + 'px)';
+        const transformStyle = 'transform: translate(' + distance.x + 'px, ' + distance.y + 'px);';
+        this.addPuckStyle(transformStyle);
+    }
+
+    addPuckStyle(additionalStyle = '') {
+        this.puckStyle = this._basePuckStyle + additionalStyle;
+    }
+
+    setBasePuckStyle(x, y) {
+        this._basePuckStyle = 'left: ' + x + 'px; top: ' + y + 'px;';
+    }
+
+    shoot() {
+        const transitionStyle = 'transition: transform 0.5s ease-out;';
+        this.addPuckStyle(transitionStyle);
+        setTimeout(_ => {
+            const shootingDistanceFactor = 5;
+            const startPosition = this._ds.getElementStartPos();
+            const distance = this._ds.getDistance();
+            const targetDistance = {
+                x: -distance.x * shootingDistanceFactor,
+                y: -distance.y * shootingDistanceFactor
+            };
+            const newPosition = {
+                x: startPosition.x + targetDistance.x,
+                y: startPosition.y + targetDistance.y
+            };
+            $(this._element).one('transitionend', _ => {
+                console.log('ready');
+                this.setBasePuckStyle(newPosition.x, newPosition.y);
+                this.addPuckStyle();
+            });
+            const transformStyle = 'transform: translate(' + targetDistance.x + 'px, ' + targetDistance.y + 'px);';
+            this.addPuckStyle(transitionStyle + transformStyle);
+        });
     }
 
     attached() {
