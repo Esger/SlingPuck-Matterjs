@@ -1,5 +1,5 @@
 {
-    "name": "Snake",
+    "name": "Sling|Puck",
     "type": "project:application",
     "platform": {
         "id": "web",
@@ -151,6 +151,11 @@
                         "name": "aurelia-cookie",
                         "path": "../node_modules/aurelia-cookie/dist/amd",
                         "main": "index"
+                    },
+                    {
+                        "name": "matter-js",
+                        "path": "../node_modules/matter-js/build",
+                        "main": "matter.js"
                     }
                 ]
             }
