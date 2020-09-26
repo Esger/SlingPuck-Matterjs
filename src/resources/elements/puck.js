@@ -9,11 +9,11 @@ import { TouchService } from '../services/touch-service';
 import { DragService } from '../services/drag-service';
 import { ScreenService } from '../services/screen-service';
 
-@inject(Element, EventAggregator, TouchService, DragService, ScreenService)
+@inject(EventAggregator, TouchService, DragService, ScreenService)
 
 export class PuckCustomElement {
 
-    constructor(element, eventAggregator, touchService, dragService, screenService) {
+    constructor(eventAggregator, touchService, dragService, screenService) {
         this._ea = eventAggregator;
         this._ds = dragService;
         this._touchService = touchService;
@@ -23,13 +23,13 @@ export class PuckCustomElement {
     }
 
     startDrag(event) {
+        this._element = event.target;
+        this._radius = this._element.offsetWidth / 2;
         this._ds.startDrag(event);
     }
 
     doDrag(event) {
         if (this._ds.getIsDragged()) {
-            this._element = event.target;
-            this._radius = this._element.offsetWidth / 2;
             this._ds.doDrag(event);
             this.setTransformStyle();
         }
@@ -37,8 +37,8 @@ export class PuckCustomElement {
 
     stopDrag() {
         this._ds.stopDrag();
-        const endPos = this._ds.getEndPos();
-        this._basePuckStyle = 'left: ' + (endPos.x - this._radius) + 'px; top: ' + (endPos.y - this._radius) + 'px;';
+        const endPos = this._ds.getElementFinalPos();
+        this._basePuckStyle = 'left: ' + (endPos.x) + 'px; top: ' + (endPos.y) + 'px;';
         this.puckStyle = this._basePuckStyle;
     }
 

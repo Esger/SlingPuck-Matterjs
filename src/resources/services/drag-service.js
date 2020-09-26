@@ -12,12 +12,10 @@ export class DragService {
     constructor(bindingSignaler, eventAggregator) {
         this.bnds = bindingSignaler;
         this._ea = eventAggregator;
-        this._dragStartPos = {};
-        this._dragEndPos = {};
         this._isDragged = false;
     }
 
-    getClientPos(event) {
+    getPointerPosition(event) {
         const clientPos = {
             x: (event.touches) ? event.touches[0].clientX : event.clientX,
             y: (event.touches) ? event.touches[0].clientY : event.clientY
@@ -36,26 +34,37 @@ export class DragService {
         return this._distance;
     }
 
-    _setStartPos(x, y) {
+    _setDragStartPos(x, y) {
         this._dragStartPos = {
             x: x,
             y: y
         };
     }
 
-    getStartPos() {
+    getDragStartPos() {
         return this._dragStartPos;
     }
 
-    _setEndPos(x, y) {
-        this._dragEndPos = {
+    _setElementStartPos(x, y) {
+        this._elementStartPos = {
             x: x,
             y: y
         };
     }
 
-    getEndPos() {
-        return this._dragEndPos;
+    getElementStartPos() {
+        return this._elementStartPos;
+    }
+
+    _setElementEndPos(x, y) {
+        this._elementFinalPos = {
+            x: x,
+            y: y
+        };
+    }
+
+    getElementFinalPos() {
+        return this._elementFinalPos;
     }
 
     getIsDragged() {
@@ -65,32 +74,23 @@ export class DragService {
     startDrag(event) {
         if (!this._isDragged) {
             this._isDragged = true;
-            const clientPos = this.getClientPos(event);
-            const container = event.target.offsetParent;
-            const startX = clientPos.x - container.offsetLeft;
-            const startY = clientPos.y - container.offsetTop;
-            this._setStartPos(startX, startY);
+            const pointerPosition = this.getPointerPosition(event);
+            this._setDragStartPos(pointerPosition.x, pointerPosition.y);
+            this._setElementStartPos(event.target.offsetLeft, event.target.offsetTop);
             this._distance = undefined;
-            this._dragEndPos = undefined;
+            this._elementFinalPos = undefined;
         }
     }
 
     doDrag(event) {
         if (this._isDragged) {
-            const clientPos = this.getClientPos(event);
-            this.dx = clientPos.x - this._dragStartPos.x;
-            this.dy = clientPos.y - this._dragStartPos.y;
-            this._setDistance(this.dx, this.dy);
+            const pointerPosition = this.getPointerPosition(event);
+            this._setDistance(pointerPosition.x - this._dragStartPos.x, pointerPosition.y - this._dragStartPos.y);
         }
     }
 
     stopDrag() {
-        this._setEndPos(this._dragStartPos.x + this._distance.x, this._dragStartPos.y + this._distance.y);
-        // this._setDistance(0, 0);
+        this._setElementEndPos(this._elementStartPos.x + this._distance.x, this._elementStartPos.y + this._distance.y);
         this._isDragged = false;
-    }
-
-    dragTreshold(distance = 19) {
-        return ((Math.abs(this._dragEndPos.x - this._dragStartPos.x) > distance) || (Math.abs(this._dragEndPos.y - this._dragStartPos.y) > distance));
     }
 }
