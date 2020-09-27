@@ -14,25 +14,63 @@ export class MatterService {
         this.Bodies = matter.Bodies;
     }
 
-    setWorld($world, pucks) {
+    setWorld($world) {
         $world = $world || $('body');
+        this._container = $world[0];
 
         this._engine = this.Engine.create();
+        this._engine.world.gravity.y = 0;
+
+        const renderOptions = {
+            width: $world.width(),
+            height: $world.height(),
+            wireframes: false // om vulkleur te kunnen gebruiken
+        };
         this._render = this.Render.create({
-            element: $world[0],
-            engine: this._engine
+            element: this._container,
+            engine: this._engine,
+            options: renderOptions
         });
+    }
 
-        this._ground = this.Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+    alignCanvas() {
+        const canvas = $('canvas')[0];
+        canvas.width = this._container.offsetWidth;
+        canvas.height = this._container.offsetHeight;
+    }
 
-        this.World.add(this._engine.world, [this._ground]);
-        pucks.forEach(puck => {
-            this._puck = this.Bodies.circle(200, 200, 50);
-            this.World.add(this._engine.world, [this._puck]);
-        });
+    clearArena() {
+        this.World.clear(this.World);
+        this.Engine.clear(this._engine);
+    }
 
+    startEngine() {
         this.Engine.run(this._engine);
-
         this.Render.run(this._render);
+    }
+
+    setPucks(pucks) {
+        pucks.forEach(puck => {
+            this._puck = this.Bodies.circle(...puck, {
+                render: {
+                    fillStyle: 'goldenrod',
+                    lineWidth: 0
+                }
+            });
+            this.World.add(this._engine.world, this._puck);
+        });
+    }
+
+    setWalls(walls) {
+        walls.forEach(wall => {
+            this._wall = this.Bodies.rectangle(...wall, {
+                isStatic: true,
+                render: {
+                    fillStyle: 'lightskyblue',
+                    lineWidth: 0
+                }
+            });
+            this.World.add(this._engine.world, this._wall);
+        });
     }
 }
