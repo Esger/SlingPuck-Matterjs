@@ -19,8 +19,11 @@ export class GameScreenCustomElement {
     attached() {
         this._$arena = $('.arena');
         this._matterService.setWorld(this._$arena);
+        this._$arena[0].addEventListener("touchstart", this.touchHandler, false);
 
-        this._puckSize = 50;
+        this._puckSize = $('body').width() / 20;
+        this.viewportHeight = window.height - 60;
+
         this._center = {
             x: this._$arena.width() / 2,
             y: this._$arena.height() / 2
@@ -29,22 +32,21 @@ export class GameScreenCustomElement {
 
         this._setWalls();
         this._setPucks();
-
+        this._matterService.useMouse();
         this._matterService.startEngine();
-
-        const resizeObserver = window.ResizeObserver;
-        this._resizeObserver = new resizeObserver(_ => {
-            this._matterService.alignCanvas();
-            this._clearArena();
-            this._setWalls();
-            this._setPucks();
-        });
-        this._resizeObserver.observe(document.body);
 
     }
 
     detached() {
         this._resizeObserver.disconnect();
+    }
+
+    touchHandler(event) {
+        if (event.touches.length > 1) {
+            //the event is multi-touch
+            //you can then prevent the behavior
+            event.preventDefault();
+        }
     }
 
     _getArena() {

@@ -17,6 +17,7 @@ export class MatterService {
     setWorld($world) {
         $world = $world || $('body');
         this._container = $world[0];
+        this._canvas = $('canvas')[0];
 
         this._engine = this.Engine.create();
         this._engine.world.gravity.y = 0;
@@ -33,10 +34,23 @@ export class MatterService {
         });
     }
 
+    useMouse() {
+        var mouseConstraint = this._matter.MouseConstraint.create(
+            this._engine, { //Create Constraint
+            element: this._canvas,
+            constraint: {
+                render: {
+                    visible: false
+                },
+                stiffness: 0.8
+            }
+        });
+        this._matter.World.add(this._engine.world, mouseConstraint);
+    }
+
     alignCanvas() {
-        const canvas = $('canvas')[0];
-        canvas.width = this._container.offsetWidth;
-        canvas.height = this._container.offsetHeight;
+        this._canvas.width = this._container.offsetWidth;
+        this._canvas.height = this._container.offsetHeight;
     }
 
     clearArena() {
@@ -63,14 +77,14 @@ export class MatterService {
 
     setWalls(walls) {
         walls.forEach(wall => {
-            this._wall = this.Bodies.rectangle(...wall, {
+            const thisWall = this.Bodies.rectangle(...wall, {
                 isStatic: true,
                 render: {
                     fillStyle: 'lightskyblue',
                     lineWidth: 0
                 }
             });
-            this.World.add(this._engine.world, this._wall);
+            this.World.add(this._engine.world, thisWall);
         });
     }
 }
