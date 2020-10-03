@@ -54,7 +54,7 @@ export class GameScreenCustomElement {
             width: this._$arena.width(),
             height: this._$arena.height(),
             center: this._center,
-            wallSize: 30
+            wallSize: 40
         };
     }
 
