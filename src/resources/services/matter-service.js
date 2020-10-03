@@ -35,7 +35,7 @@ export class MatterService {
     }
 
     useMouse() {
-        var mouseConstraint = this._matter.MouseConstraint.create(
+        let mouseConstraint = this._matter.MouseConstraint.create(
             this._engine, { //Create Constraint
             element: this._canvas,
             constraint: {
@@ -46,6 +46,8 @@ export class MatterService {
             }
         });
         this._matter.World.add(this._engine.world, mouseConstraint);
+        mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+        mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
     }
 
     alignCanvas() {
